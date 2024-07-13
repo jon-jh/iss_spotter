@@ -3,7 +3,7 @@
 const needle = require("needle");
 
 const fetchMyIP = function(callback) {
-  needle.get(('https://api.ipify.org?format=json'), (err, response, body) => {
+  needle.get(('https://api.ipify.org?format=json'), (err, response, body) => { //get ip address from api using needle
     if (err) {
       console.log('There was an error.', err);
       return;
@@ -25,7 +25,7 @@ const fetchMyIP = function(callback) {
 
 // Step 2 - input fetchMyIp into another api that returns the geo location.
 
-const geoLocate = function(ip, callback) {
+const geoLocate = function(ip, callback) { //get ip from API using needle
   needle.get((`http://ipwho.is/${ip}`), (err, response, body) => {
     // console.log(body)
 
@@ -42,7 +42,22 @@ const geoLocate = function(ip, callback) {
 
   });
 };
+let someCoords = { latitude: '49.27670', longitude: '-123.13000' };
 
+const issFlyoverTimes = function(coords, callback) {
+  const url = `https://iss-flyover.herokuapp.com/json/?lat=${coords.latitude}&lon=${coords.longitude}`;
 
+  needle.get(url, (err, response, body) => {
+    if (err) {
+      callback(err, null);
+      return;
+    }
 
-module.exports = { fetchMyIP, geoLocate};
+    console.log(body);
+  });
+
+};
+
+// issFlyoverTimes(someCoords)
+
+module.exports = { issFlyoverTimes, geoLocate, fetchMyIP};
