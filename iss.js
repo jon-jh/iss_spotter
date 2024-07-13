@@ -17,7 +17,7 @@ const fetchMyIP = function(callback) {
     callback(body.ip); //use this instead of "return" to pass the ip adress back into the callback function. This is because these functions are asyncronous.
   });
 };
-  
+
 
 // Test
 
@@ -27,6 +27,9 @@ const fetchMyIP = function(callback) {
 
 const geoLocate = function(ip, callback) { //get ip from API using needle
   needle.get((`http://ipwho.is/${ip}`), (err, response, body) => {
+    if (err) {
+      callback(null)
+    }
     // console.log(body)
 
     //we want to extract the properties called 'latitude' and 'longitude' from the object 'body'
@@ -34,7 +37,7 @@ const geoLocate = function(ip, callback) { //get ip from API using needle
     const longitude = body.longitude;
 
 
-    callback({latitude, longitude});//use this instead of "return" to pass the ip adress back into the callback function. This is because these functions are asyncronous.
+    callback({ latitude, longitude });//use this instead of "return" to pass the ip adress back into the callback function. This is because these functions are asyncronous.
 
 
 
@@ -42,22 +45,10 @@ const geoLocate = function(ip, callback) { //get ip from API using needle
 
   });
 };
-let someCoords = { latitude: '49.27670', longitude: '-123.13000' };
 
-const issFlyoverTimes = function(coords, callback) {
-  const url = `https://iss-flyover.herokuapp.com/json/?lat=${coords.latitude}&lon=${coords.longitude}`;
+// use web API to get flyover times for certain coordinates
 
-  needle.get(url, (err, response, body) => {
-    if (err) {
-      callback(err, null);
-      return;
-    }
 
-    console.log(body);
-  });
 
-};
 
-// issFlyoverTimes(someCoords)
-
-module.exports = { issFlyoverTimes, geoLocate, fetchMyIP};
+module.exports = { fetchMyIP, geoLocate, flyoverTimes };

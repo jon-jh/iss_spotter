@@ -3,12 +3,3 @@
 // The index.js file should not contain most of the code, instead just call the modules from the other files.
 
 // Step 1: Fetch our IP adress. => Start with the other js files then import the module to here.
-
-const { issFlyoverTimes, fetchMyIP, geoLocate } = require('./iss.js');
-
-fetchMyIP((ip) => {
-  geoLocate(ip, (data) => {
-    console.log('Located your IP adress at:', data);
-    issFlyoverTimes(data);
-  });
-});
