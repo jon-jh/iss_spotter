@@ -4,6 +4,10 @@
 
 // Step 1: Fetch our IP adress. => Start with the other js files then import the module to here.
 
-const { fetchMyIP } = require('./iss.js');
+const { fetchMyIP, geoLocate } = require('./iss.js');
 
-fetchMyIP();
+fetchMyIP((ip) => {
+  geoLocate(ip, (data) => {
+    console.log('Located your IP adress at:', data);
+  });
+});
