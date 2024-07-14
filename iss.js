@@ -3,9 +3,10 @@
 needle syntax:
 
 needle.get(url, function(error, response) {
-if (!error && response.statusCode == 200)
-  console.log(response.body);
-  });
+    if (error) {
+      callback(error);
+    }
+    callback(null, response.body);
 
 
  * Makes a single API request to retrieve the user's IP address.
@@ -50,5 +51,32 @@ const fetchCoordsByIP = function(callback) {
 };
 
 
+//Now, insert a function to get the ISS flyover times for coords.
+/*
+ * Input:
+ *   - An object with keys `latitude` and `longitude`
+ *   - A callback (to pass back an error or the array of resulting data)
+ * Returns (via Callback):
+ *   - An error, if any (nullable)
+ *   - The fly over times as an array of objects (null if error). Example:
+ *     [ { risetime: 134564234, duration: 600 }, ... ]
+ */
 
-module.exports = { fetchMyIP, fetchCoordsByIP }; // must always be at the bottom of the file to allow for proper initialization of the functions.
+const coords = { latitude: 0, longitude: 0 };
+
+const fetchISSFlyOverTimes = function(coords, callback) {
+
+  let url = `https://iss-flyover.herokuapp.com/json/?lat=${coords.latitude}&lon=${coords.longitude}`;
+  
+  needle.get(url, function(error, data) {
+    if (error) {
+      callback(error, null);
+    }
+    callback(null, data.body.response);
+  }
+  );
+};
+
+
+
+module.exports = { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes, coords }; // must always be at the bottom of the file to allow for proper initialization of the functions.
