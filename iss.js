@@ -1,54 +1,35 @@
-// Define a function fetchMyIP which will asynchronously return our IP Address using an API.
+/* Define a function fetchMyIP which will asynchronously return our IP Address using an API.
 
-const needle = require("needle");
+needle syntax:
+
+needle.get(url, function(error, response) {
+if (!error && response.statusCode == 200)
+  console.log(response.body);
+  });
+
+
+ * Makes a single API request to retrieve the user's IP address.
+ * Input:
+ *   - A callback (to pass back an error or the IP string)
+ * Returns (via Callback):
+ *   - An error, if any (nullable)
+ *   - The IP address as a string (null if error). Example: "162.245.144.188"
+ * // parse and extract the IP address using JSON and then pass that through to the callback (as the second argument) if there is no error
+ */
+
+const needle = require('needle');
+
 
 const fetchMyIP = function(callback) {
-  needle.get(('https://api.ipify.org?format=json'), (err, response, body) => { //get ip address from api using needle
-    if (err) {
-      console.log('There was an error.', err);
-      return;
-    }
 
-    if (response.statusCode !== 200) {
-      console.log(`There was an error with status code: ${response.statusCode}`);
-    }
+  const url = 'https://api.ipify.org?format=json';
 
-    console.log('Success! Here is your IP:', body.ip);
-    callback(body.ip); //use this instead of "return" to pass the ip adress back into the callback function. This is because these functions are asyncronous.
+  needle.get(url, function(error, response) {
+    if (error) {
+      callback(error);
+    }
+    callback(null, response.body); // Remember, you are calling fetchMyIP with 2 arguments, so you must include 2 here.
   });
 };
 
-
-// Test
-
-// fetchMyIP()
-
-// Step 2 - input fetchMyIp into another api that returns the geo location.
-
-const geoLocate = function(ip, callback) { //get ip from API using needle
-  needle.get((`http://ipwho.is/${ip}`), (err, response, body) => {
-    if (err) {
-      callback(null)
-    }
-    // console.log(body)
-
-    //we want to extract the properties called 'latitude' and 'longitude' from the object 'body'
-    const latitude = body.latitude;
-    const longitude = body.longitude;
-
-
-    callback({ latitude, longitude });//use this instead of "return" to pass the ip adress back into the callback function. This is because these functions are asyncronous.
-
-
-
-
-
-  });
-};
-
-// use web API to get flyover times for certain coordinates
-
-
-
-
-module.exports = { fetchMyIP, geoLocate, flyoverTimes };
+module.exports = { fetchMyIP }; // must always be at the bottom of the file to allow for proper initialization of the functions.
