@@ -3,7 +3,7 @@
 // The index.js file should not contain most of the code, instead just call the modules from the other files.
 
 // Step 1: Fetch our IP adress. => Start with the other js files then import the module to here.
-const { fetchMyIP } = require('./iss');
+const { fetchMyIP, fetchCoordsByIP } = require('./iss');
 
 // Testing / Calling fetchMyIP
 
@@ -13,4 +13,14 @@ fetchMyIP((error, ip) => {
     return;
   }
   console.log('Success! Fetched your IP as:', ip);
+});
+
+// Testing the fetchCoordsByIP
+
+fetchCoordsByIP((error, lat, long) => {
+  if (error) {
+    console.log('There was an error fetching your coords', error);
+    return;
+  }
+  console.log('Success! Fetched your coords as:', lat, long);
 });

@@ -32,4 +32,23 @@ const fetchMyIP = function(callback) {
   });
 };
 
-module.exports = { fetchMyIP }; // must always be at the bottom of the file to allow for proper initialization of the functions.
+// Our next function, fetchCoordsByIP will be one that takes in an IP address and returns the latitude and longitude for it.
+
+const fetchCoordsByIP = function(callback) {
+  let ipOrig = '0.0.0.0';
+  let url = `http://ipwho.is/${ipOrig}`;
+
+  needle.get(url, function(error, response) {
+    if (error) {
+      callback(error);
+    }
+
+    callback(error, response.body.latitude, response.body.longitude); // Remember, you are calling with 3 arguments, so you must include 3 here.
+    // console.log(typeof(response))
+
+  });
+};
+
+
+
+module.exports = { fetchMyIP, fetchCoordsByIP }; // must always be at the bottom of the file to allow for proper initialization of the functions.
