@@ -1,12 +1,23 @@
 /* Define a function fetchMyIP which will asynchronously return our IP Address using an API.
 
-needle syntax:
+needle syntax for callback use:
 
 needle.get(url, function(error, response) {
     if (error) {
       callback(error);
     }
     callback(null, response.body);
+
+needle syntax for promise use:
+
+const fetchMyIP = function() {
+  return needle('get','url')
+  .then((response) => {
+    const body = response.body; // retrieve the body value from the response object
+    const ip = body.ip; // retrieve the ip from the body object
+    return ip;
+  });
+};
 
 
  * Makes a single API request to retrieve the user's IP address.
