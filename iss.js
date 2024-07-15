@@ -20,7 +20,6 @@ needle.get(url, function(error, response) {
 
 const needle = require('needle');
 
-
 const fetchMyIP = function(callback) {
 
   const url = 'https://api.ipify.org?format=json';
@@ -29,24 +28,22 @@ const fetchMyIP = function(callback) {
     if (error) {
       callback(error);
     }
-    callback(null, response.body); // Remember, you are calling fetchMyIP with 2 arguments, so you must include 2 here.
+    callback(null, response.body.ip); // added .ip to callback the right data, not the whole body.
+    
+    //Remember, you are calling fetchMyIP with 2 arguments, so you must include 2 here.
   });
 };
 
 // Our next function, fetchCoordsByIP will be one that takes in an IP address and returns the latitude and longitude for it.
 
-const fetchCoordsByIP = function(callback) {
-  let ipOrig = '0.0.0.0';
-  let url = `http://ipwho.is/${ipOrig}`;
-
+const fetchCoordsByIP = function(ip, callback) { //added placeholder for ip since it needs to get the ip from the earlier function in this case.
+  const url = `http://ipwho.is/${ip}`;
   needle.get(url, function(error, response) {
     if (error) {
       callback(error);
     }
-
-    callback(error, response.body.latitude, response.body.longitude); // Remember, you are calling with 3 arguments, so you must include 3 here.
-    // console.log(typeof(response))
-
+    const { latitude, longitude } = response.body;// Changed this to callback the objects as a const = response.body
+    callback(null, latitude, longitude);
   });
 };
 
@@ -61,8 +58,8 @@ const fetchCoordsByIP = function(callback) {
  *   - The fly over times as an array of objects (null if error). Example:
  *     [ { risetime: 134564234, duration: 600 }, ... ]
  */
-
-const coords = { latitude: 0, longitude: 0 };
+// disabled test coords to make the chain function which gets coords from the previous function.
+// let coords = { latitude: 0, longitude: 0 };
 
 const fetchISSFlyOverTimes = function(coords, callback) {
 
@@ -78,5 +75,31 @@ const fetchISSFlyOverTimes = function(coords, callback) {
 };
 
 
+const nextISSTimesForMyLocation = function(callback) {
+  fetchMyIP((error, ip) => {
+    if (error) {
+      callback(error, null);
+    } //If fetchMyIP succeeds, it calls fetchCoordsByIP with the IP address.
+    fetchCoordsByIP(ip, (error, latitude, longitude) => {
+      if (error) {
+        callback(error, null);
+      } //If fetchCoordsByIP succeeds, it calls fetchISSFlyOverTimes with the coordinates.
+      const coords = { latitude, longitude };
+      fetchISSFlyOverTimes(coords, (error, flyoverTimes) => {
+        if (error) {
+          callback(error, null);
+        } //If fetchISSFlyOverTimes succeeds, it calls the final callback with the flyover times
+        callback(null, flyoverTimes);
+      });
+    });
+  });
+};
 
-module.exports = { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes, coords }; // must always be at the bottom of the file to allow for proper initialization of the functions.
+
+
+module.exports = {
+  fetchMyIP,
+  // fetchCoordsByIP,
+  // fetchISSFlyOverTimes,
+  nextISSTimesForMyLocation
+}; // must always be at the bottom of the file to allow for proper initialization of the functions.
