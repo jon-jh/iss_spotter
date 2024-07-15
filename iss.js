@@ -98,8 +98,10 @@ const nextISSTimesForMyLocation = function(callback) {
 
 
 module.exports = {
-  fetchMyIP,
+  // fetchMyIP,
   // fetchCoordsByIP,
   // fetchISSFlyOverTimes,
   nextISSTimesForMyLocation
-}; // must always be at the bottom of the file to allow for proper initialization of the functions.
+};
+
+// must always be at the bottom of the file to allow for proper initialization of the functions.
